@@ -4,19 +4,15 @@
 
 CinemaSIMA est un système expert développé en Prolog pour recommander des films et séries basé sur les préférences utilisateur. Le système utilise une approche symbolique avec des règles explicites pour générer des recommandations personnalisées et explicables.
 
-**Module:** Fondements avancés de l'IA  
-**Professeur:** PR. ELALAOUI Hasna  
-**Filière:** Master IA - S1  
-**Année universitaire:** 2025-2026
 
-## 🎯 Objectifs
+##  Objectifs
 
 - Modéliser un raisonnement explicable pour la recommandation de contenu
 - Implémenter un système expert en Prolog avec une base de connaissances de 30+ contenus
 - Créer une interface web professionnelle pour interagir avec le système
 - Fournir des explications détaillées pour chaque recommandation
 
-## 📦 Structure du Projet
+##  Structure du Projet
 
 ```
 CinemaSIMA/
@@ -26,7 +22,7 @@ CinemaSIMA/
 └── Rapport.pdf            # Rapport détaillé (à générer)
 ```
 
-## 🚀 Installation et Utilisation
+##  Installation et Utilisation
 
 ### Prérequis
 
@@ -97,30 +93,30 @@ CinemaSIMA/
    - Explications détaillées pour chaque recommandation
    - Avertissements si contraintes non respectées
 
-## 🎨 Fonctionnalités
+##  Fonctionnalités
 
 ### Système Expert (Prolog)
 
-- ✅ Base de connaissances: 20 films + 10 séries
-- ✅ Règles de recommandation basées sur:
+-  Base de connaissances: 20 films + 10 séries
+-  Règles de recommandation basées sur:
   - Genres communs (×40 points)
   - Note du film/série (×4 points)
   - Respect des contraintes (+10 points chacune)
-- ✅ Exclusion automatique des contenus bannis
-- ✅ Génération d'explications détaillées
-- ✅ Scoring transparent et explicable
+-  Exclusion automatique des contenus bannis
+-  Génération d'explications détaillées
+-  Scoring transparent et explicable
 
 ### Interface Web
 
-- 🎨 Design professionnel et sobre
-- 📱 Responsive (Desktop, Tablet, Mobile)
-- 🎯 Formulaire de préférences complet
-- 📊 Statistiques des recommandations
-- 💡 Explications système expert (affichage optionnel)
-- ⚡ Animation et transitions fluides
-- 🚫 Aucun élément visuel "IA générique"
+-  Design professionnel et sobre
+-  Responsive (Desktop, Tablet, Mobile)
+-  Formulaire de préférences complet
+-  Statistiques des recommandations
+-  Explications système expert (affichage optionnel)
+-  Animation et transitions fluides
+-  Aucun élément visuel "IA générique"
 
-## 🧮 Algorithme de Scoring
+##  Algorithme de Scoring
 
 ```
 Score = (Genres communs × 40) + (Note × 4) + Bonus contraintes
@@ -140,7 +136,7 @@ Exclusion:
 - Année respectée: +10 points
 - **Score total: 134/100**
 
-## 📚 Base de Connaissances
+##  Base de Connaissances
 
 ### Films (20)
 - Inception, Matrix, Interstellar, Mad Max: Fury Road
@@ -155,7 +151,7 @@ Exclusion:
 - The Office, Game of Thrones, The Mandalorian
 - Fleabag, True Detective, Succession
 
-## 🔧 Architecture Technique
+##  Architecture Technique
 
 ### Fichier Prolog (cinemasima.pl)
 
@@ -192,7 +188,7 @@ Exclusion:
 - Animations et transitions
 - Responsive design
 
-## 🎓 Aspects Pédagogiques
+##  Aspects Pédagogiques
 
 Ce projet démontre:
 
@@ -202,14 +198,14 @@ Ce projet démontre:
 4. **Interface utilisateur:** Interaction humain-machine
 5. **Architecture logicielle:** Séparation logique/présentation
 
-## 📝 Notes Importantes
+##  Notes Importantes
 
 - **Contrainte de genre:** Au moins 1 genre doit être sélectionné
 - **Limite de résultats:** Top 5 recommandations maximum
 - **Score minimal:** Seuls les contenus avec score > 20 sont affichés
 - **Tri:** Recommandations triées par score décroissant
 
-## 🔍 Tests Unitaires
+##  Tests Unitaires
 
 Le fichier Prolog inclut des prédicats de test:
 
@@ -225,21 +221,21 @@ Ces tests permettent de vérifier le bon fonctionnement du système.
 
 ## 📄 Livrables
 
-1. ✅ Code Prolog complet (`cinemasima.pl`)
-2. ✅ Interface web (`index.html`)
-3. 📋 Rapport PDF détaillé (à compléter)
+1.  Code Prolog complet (`cinemasima.pl`)
+2.  Interface web (`index.html`)
+3.  Rapport PDF détaillé (à compléter)
 
-## 🤝 Contribution
+##  Contribution
 
 **Auteur(s):** [Votre nom]  
 **Binôme:** [Nom du binôme si applicable]
 
-## 📅 Calendrier
+##  Calendrier
 
 - **Date limite:** Dimanche 18 Janvier 2026 à Minuit
 - **Soumission:** Google Drive (lien fourni par le professeur)
 
-## 🎯 Améliorations Possibles
+##  Améliorations Possibles
 
 - Intégration de plus de films/séries
 - Ajout de critères de filtrage (langue, pays)
@@ -248,10 +244,10 @@ Ces tests permettent de vérifier le bon fonctionnement du système.
 - Base de données persistante
 - Système de notation utilisateur
 
-## 📞 Support
+##  Support
 
 Pour toute question sur le projet, contacter le professeur via les canaux officiels du cours.
 
 ---
 
-**CinemaSIMA** - Un système expert pour des recommandations intelligentes et explicables 🎬📺
+**CinemaSIMA** - Un système expert pour des recommandations intelligentes et explicables 
