@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CinemaSIMA - Système Expert de Recommandation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #0f766e;
+            --secondary: #0d9488;
+            --accent: #10b981;
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --border-radius: 20px;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem 0;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        /* Layout */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 12px rgba(15, 118, 110, 0.2);
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        /* Content Type Selector */
+        .content-type-selector {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .content-type-btn {
+            flex: 1;
+            padding: 1rem;
+            background: var(--card-bg);
+            border: 2px solid var(--secondary);
+            border-radius: 12px;
+            color: var(--text-primary);
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .content-type-btn:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        .content-type-btn.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-color: var(--accent);
+            box-shadow: 0 4px 12px rgba(15, 118, 110, 0.4);
+        }
+
+        /* Genre Grid */
+        .genre-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 0.75rem;
+        }
+
+        .genre-checkbox {
+            display: none;
+        }
+
+        .genre-label {
+            display: block;
+            padding: 0.75rem 1rem;
+            background: rgba(15, 118, 110, 0.1);
+            border: 2px solid var(--secondary);
+            border-radius: 12px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .genre-label:hover {
+            background: rgba(15, 118, 110, 0.2);
+            transform: translateX(4px);
+        }
+
+        .genre-checkbox:checked + .genre-label {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-color: var(--accent);
+            box-shadow: 0 2px 8px rgba(15, 118, 110, 0.4);
+        }
+
+        /* Input Fields */
+        input[type="number"],
+        textarea {
+            width: 100%;
+            padding: 0.75rem;
+            background: rgba(15, 118, 110, 0.1);
+            border: 2px solid var(--secondary);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        input[type="number"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: rgba(15, 118, 110, 0.15);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        /* Buttons */
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 4px 12px rgba(15, 118, 110, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(15, 118, 110, 0.5);
+        }
+
+        .btn-secondary {
+            background: rgba(203, 213, 225, 0.1);
+            color: var(--text-secondary);
+            border: 2px solid var(--text-secondary);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(203, 213, 225, 0.2);
+            color: var(--text-primary);
+        }
+
+        /* Info Panel */
+        .info-list {
+            list-style: none;
+            margin-top: 1rem;
+        }
+
+        .info-list li {
+            padding: 0.5rem 0;
+            color: var(--text-secondary);
+            border-bottom: 1px solid rgba(203, 213, 225, 0.1);
+        }
+
+        .info-list li:last-child {
+            border-bottom: none;
+        }
+
+        /* Expert System Toggle */
+        .expert-toggle {
+            margin-top: 2rem;
+        }
+
+        .toggle-btn {
+            background: rgba(16, 185, 129, 0.1);
+            border: 2px solid var(--accent);
+            color: var(--accent);
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-btn:hover {
+            background: rgba(16, 185, 129, 0.2);
+        }
+
+        .expert-content {
+            display: none;
+            margin-top: 1rem;
+            padding: 1.5rem;
+            background: rgba(15, 118, 110, 0.1);
+            border-radius: 12px;
+            border-left: 4px solid var(--accent);
+        }
+
+        .expert-content.active {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .formula {
+            font-family: 'Courier New', monospace;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+            line-height: 1.8;
+        }
+
+        /* Results Section */
+        .results-section {
+            width: 100%;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            border: 2px solid var(--secondary);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        /* Recommendations */
+        .recommendation-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid var(--accent);
+            animation: slideIn 0.5s ease;
+            transition: all 0.3s ease;
+        }
+
+        .recommendation-card:hover {
+            transform: translateX(8px);
+            box-shadow: 0 8px 24px rgba(15, 118, 110, 0.3);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .rec-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .rec-rank {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .rec-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .rec-type {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: rgba(16, 185, 129, 0.2);
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .rec-score {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .rec-explanation {
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-top: 1rem;
+        }
+
+        .warning {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            background: rgba(239, 68, 68, 0.1);
+            border-left: 3px solid #ef4444;
+            border-radius: 6px;
+            color: #fca5a5;
+            font-size: 0.9rem;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+        }
+
+        .no-results h3 {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            margin: 0 auto 1rem;
+            border: 4px solid rgba(15, 118, 110, 0.2);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .genre-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .content-type-selector {
+                flex-direction: column;
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <h1>CinemaSIMA</h1>
+            <p class="subtitle">Système Expert de Recommandation de Films et Séries</p>
+        </header>
+
+        <!-- Main Layout -->
+        <div class="main-layout">
+            <!-- Left Column: Preferences Form -->
+            <div class="card">
+                <h2 class="card-title">📋 Vos préférences</h2>
+
+                <!-- Content Type Selector -->
+                <div class="form-group">
+                    <label>Type de contenu</label>
+                    <div class="content-type-selector">
+                        <button class="content-type-btn active" data-type="film">🎞️ Films</button>
+                        <button class="content-type-btn" data-type="serie">📺 Séries</button>
+                    </div>
+                </div>
+
+                <!-- Genres -->
+                <div class="form-group">
+                    <label>Genres préférés *</label>
+                    <div class="genre-grid" id="genreGrid"></div>
+                </div>
+
+                <!-- Constraints -->
+                <div class="form-group">
+                    <label for="maxDuration">Durée maximale (minutes)</label>
+                    <input type="number" id="maxDuration" value="180" min="60" max="300">
+                </div>
+
+                <div class="form-group">
+                    <label for="minYear">Année minimale</label>
+                    <input type="number" id="minYear" value="1990" min="1900" max="2025">
+                </div>
+
+                <!-- Positive Preferences -->
+                <div class="form-group">
+                    <label for="favoriteActors">Acteurs préférés (un par ligne)</label>
+                    <textarea id="favoriteActors" placeholder="Leonardo DiCaprio&#10;Tom Hanks"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="favoriteDirectors">Réalisateurs préférés (un par ligne)</label>
+                    <textarea id="favoriteDirectors" placeholder="Christopher Nolan&#10;Quentin Tarantino"></textarea>
+                </div>
+
+                <!-- Negative Preferences -->
+                <div class="form-group">
+                    <label for="bannedActors">Acteurs à éviter (un par ligne)</label>
+                    <textarea id="bannedActors" placeholder="Acteur 1&#10;Acteur 2"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="bannedDirectors">Réalisateurs à éviter (un par ligne)</label>
+                    <textarea id="bannedDirectors" placeholder="Réalisateur 1&#10;Réalisateur 2"></textarea>
+                </div>
+
+                <!-- Buttons -->
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="generateRecommendations()">Générer</button>
+                    <button class="btn btn-secondary" onclick="resetForm()">Réinitialiser</button>
+                </div>
+            </div>
+
+            <!-- Right Column: Info Panel -->
+            <div class="card">
+                <h2 class="card-title">ℹ️ À propos du système</h2>
+                <ul class="info-list">
+                    <li><strong>Base de connaissances :</strong> 30 films & séries</li>
+                    <li><strong>Moteur d'inférence :</strong> Prolog</li>
+                    <li><strong>Explications automatiques :</strong> Activées</li>
+                    <li><strong>Transparence totale :</strong> Toutes les décisions sont justifiées</li>
+                </ul>
+
+                <div class="expert-toggle">
+                    <button class="toggle-btn" onclick="toggleExpertSystem()">
+                        🔍 Voir le système expert
+                    </button>
+                    <div class="expert-content" id="expertContent">
+                        <h3 style="color: var(--accent); margin-bottom: 1rem;">Formule de scoring</h3>
+                        <div class="formula">
+Score = (Genres communs × 40) + (Note × 4) + Bonus contraintes
+
+Bonus contraintes :
+  +10 si durée ≤ durée maximale
+  +10 si année ≥ année minimale
+
+Exclusion :
+  Contenu exclu si acteur ou réalisateur banni
+                        </div>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                            Le système utilise une approche symbolique basée sur des règles explicites. 
+                            Chaque recommandation est accompagnée d'une explication détaillée.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="results-section" id="resultsSection" style="display: none;">
+            <!-- Statistics -->
+            <div class="stats" id="statsSection"></div>
+
+            <!-- Loading Animation -->
+            <div class="loading" id="loadingSection">
+                <div class="spinner"></div>
+                <p style="color: var(--text-secondary);">Analyse des préférences en cours...</p>
+            </div>
+
+            <!-- Recommendations -->
+            <div id="recommendationsSection"></div>
+        </div>
+    </div>
+
+    <script>
+        // Database
+        const films = [
+            {id: 1, title: 'Inception', genres: ['action', 'sci_fi', 'thriller'], director: 'Christopher Nolan', actors: ['Leonardo DiCaprio', 'Tom Hardy', 'Ellen Page'], year: 2010, duration: 148, rating: 8.8},
+            {id: 2, title: 'The Matrix', genres: ['action', 'sci_fi'], director: 'Wachowski Brothers', actors: ['Keanu Reeves', 'Laurence Fishburne', 'Carrie-Anne Moss'], year: 1999, duration: 136, rating: 8.7},
+            {id: 3, title: 'Interstellar', genres: ['sci_fi', 'drama', 'adventure'], director: 'Christopher Nolan', actors: ['Matthew McConaughey', 'Anne Hathaway', 'Jessica Chastain'], year: 2014, duration: 169, rating: 8.6},
+            {id: 4, title: 'Mad Max: Fury Road', genres: ['action', 'adventure', 'sci_fi'], director: 'George Miller', actors: ['Tom Hardy', 'Charlize Theron', 'Nicholas Hoult'], year: 2015, duration: 120, rating: 8.1},
+            {id: 5, title: 'Blade Runner 2049', genres: ['sci_fi', 'thriller', 'mystery'], director: 'Denis Villeneuve', actors: ['Ryan Gosling', 'Harrison Ford', 'Ana de Armas'], year: 2017, duration: 164, rating: 8.0},
+            {id: 6, title: 'The Shawshank Redemption', genres: ['drama'], director: 'Frank Darabont', actors: ['Tim Robbins', 'Morgan Freeman'], year: 1994, duration: 142, rating: 9.3},
+            {id: 7, title: 'Forrest Gump', genres: ['drama', 'romance'], director: 'Robert Zemeckis', actors: ['Tom Hanks', 'Robin Wright', 'Gary Sinise'], year: 1994, duration: 142, rating: 8.8},
+            {id: 8, title: 'The Grand Budapest Hotel', genres: ['comedy', 'drama', 'adventure'], director: 'Wes Anderson', actors: ['Ralph Fiennes', 'Tony Revolori', 'Saoirse Ronan'], year: 2014, duration: 99, rating: 8.1},
+            {id: 9, title: 'Parasite', genres: ['thriller', 'drama', 'comedy'], director: 'Bong Joon-ho', actors: ['Song Kang-ho', 'Lee Sun-kyun', 'Cho Yeo-jeong'], year: 2019, duration: 132, rating: 8.6},
+            {id: 10, title: 'La La Land', genres: ['romance', 'drama', 'musical'], director: 'Damien Chazelle', actors: ['Ryan Gosling', 'Emma Stone', 'John Legend'], year: 2016, duration: 128, rating: 8.0},
+            {id: 11, title: 'Get Out', genres: ['horror', 'thriller', 'mystery'], director: 'Jordan Peele', actors: ['Daniel Kaluuya', 'Allison Williams', 'Bradley Whitford'], year: 2017, duration: 104, rating: 7.7},
+            {id: 12, title: 'The Silence of the Lambs', genres: ['thriller', 'crime', 'horror'], director: 'Jonathan Demme', actors: ['Jodie Foster', 'Anthony Hopkins', 'Scott Glenn'], year: 1991, duration: 118, rating: 8.6},
+            {id: 13, title: 'Hereditary', genres: ['horror', 'drama', 'mystery'], director: 'Ari Aster', actors: ['Toni Collette', 'Alex Wolff', 'Milly Shapiro'], year: 2018, duration: 127, rating: 7.3},
+            {id: 14, title: 'A Quiet Place', genres: ['horror', 'sci_fi', 'thriller'], director: 'John Krasinski', actors: ['Emily Blunt', 'John Krasinski', 'Millicent Simmonds'], year: 2018, duration: 90, rating: 7.5},
+            {id: 15, title: 'Superbad', genres: ['comedy'], director: 'Greg Mottola', actors: ['Jonah Hill', 'Michael Cera', 'Christopher Mintz-Plasse'], year: 2007, duration: 113, rating: 7.6},
+            {id: 16, title: 'The Big Lebowski', genres: ['comedy', 'crime'], director: 'Joel Coen', actors: ['Jeff Bridges', 'John Goodman', 'Julianne Moore'], year: 1998, duration: 117, rating: 8.1},
+            {id: 17, title: 'Knives Out', genres: ['mystery', 'comedy', 'crime'], director: 'Rian Johnson', actors: ['Daniel Craig', 'Ana de Armas', 'Chris Evans'], year: 2019, duration: 130, rating: 7.9},
+            {id: 18, title: 'Spider-Man: Into the Spider-Verse', genres: ['animation', 'action', 'adventure'], director: 'Bob Persichetti', actors: ['Shameik Moore', 'Jake Johnson', 'Hailee Steinfeld'], year: 2018, duration: 117, rating: 8.4},
+            {id: 19, title: 'Coco', genres: ['animation', 'family', 'fantasy'], director: 'Lee Unkrich', actors: ['Anthony Gonzalez', 'Gael García Bernal', 'Benjamin Bratt'], year: 2017, duration: 105, rating: 8.4},
+            {id: 20, title: 'Your Name', genres: ['animation', 'romance', 'fantasy'], director: 'Makoto Shinkai', actors: ['Ryunosuke Kamiki', 'Mone Kamishiraishi'], year: 2016, duration: 106, rating: 8.4}
+        ];
+
+        const series = [
+            {id: 1, title: 'Breaking Bad', genres: ['crime', 'drama', 'thriller'], director: 'Vince Gilligan', actors: ['Bryan Cranston', 'Aaron Paul', 'Anna Gunn'], year: 2008, duration: 47, rating: 9.5, seasons: 5},
+            {id: 2, title: 'Stranger Things', genres: ['sci_fi', 'horror', 'drama'], director: 'Duffer Brothers', actors: ['Millie Bobby Brown', 'Finn Wolfhard', 'Winona Ryder'], year: 2016, duration: 51, rating: 8.7, seasons: 4},
+            {id: 3, title: 'The Crown', genres: ['drama', 'history'], director: 'Peter Morgan', actors: ['Claire Foy', 'Olivia Colman', 'Imelda Staunton'], year: 2016, duration: 58, rating: 8.6, seasons: 6},
+            {id: 4, title: 'Black Mirror', genres: ['sci_fi', 'thriller', 'drama'], director: 'Charlie Brooker', actors: ['Various'], year: 2011, duration: 60, rating: 8.7, seasons: 5},
+            {id: 5, title: 'The Office', genres: ['comedy'], director: 'Greg Daniels', actors: ['Steve Carell', 'Rainn Wilson', 'John Krasinski'], year: 2005, duration: 22, rating: 9.0, seasons: 9},
+            {id: 6, title: 'Game of Thrones', genres: ['fantasy', 'drama', 'adventure'], director: 'David Benioff', actors: ['Emilia Clarke', 'Kit Harington', 'Peter Dinklage'], year: 2011, duration: 57, rating: 9.2, seasons: 8},
+            {id: 7, title: 'The Mandalorian', genres: ['sci_fi', 'action', 'adventure'], director: 'Jon Favreau', actors: ['Pedro Pascal', 'Carl Weathers', 'Gina Carano'], year: 2019, duration: 40, rating: 8.7, seasons: 3},
+            {id: 8, title: 'Fleabag', genres: ['comedy', 'drama'], director: 'Phoebe Waller-Bridge', actors: ['Phoebe Waller-Bridge', 'Sian Clifford', 'Olivia Colman'], year: 2016, duration: 27, rating: 8.7, seasons: 2},
+            {id: 9, title: 'True Detective', genres: ['crime', 'drama', 'mystery'], director: 'Nic Pizzolatto', actors: ['Matthew McConaughey', 'Woody Harrelson', 'Colin Farrell'], year: 2014, duration: 55, rating: 8.9, seasons: 3},
+            {id: 10, title: 'Succession', genres: ['drama'], director: 'Jesse Armstrong', actors: ['Brian Cox', 'Jeremy Strong', 'Sarah Snook'], year: 2018, duration: 60, rating: 8.9, seasons: 4}
+        ];
+
+        const allGenres = [
+            {id: 'action', label: 'Action'},
+            {id: 'adventure', label: 'Aventure'},
+            {id: 'animation', label: 'Animation'},
+            {id: 'comedy', label: 'Comédie'},
+            {id: 'crime', label: 'Crime'},
+            {id: 'drama', label: 'Drame'},
+            {id: 'family', label: 'Familial'},
+            {id: 'fantasy', label: 'Fantastique'},
+            {id: 'history', label: 'Histoire'},
+            {id: 'horror', label: 'Horreur'},
+            {id: 'musical', label: 'Musical'},
+            {id: 'mystery', label: 'Mystère'},
+            {id: 'romance', label: 'Romance'},
+            {id: 'sci_fi', label: 'Science-Fiction'},
+            {id: 'thriller', label: 'Thriller'}
+        ];
+
+        let selectedContentType = 'film';
+
+        // Initialize
+        function init() {
+            renderGenres();
+            setupContentTypeButtons();
+        }
+
+        function renderGenres() {
+            const grid = document.getElementById('genreGrid');
+            grid.innerHTML = allGenres.map(genre => `
+                <div>
+                    <input type="checkbox" id="genre-${genre.id}" class="genre-checkbox" value="${genre.id}">
+                    <label for="genre-${genre.id}" class="genre-label">${genre.label}</label>
+                </div>
+            `).join('');
+        }
+
+        function setupContentTypeButtons() {
+            document.querySelectorAll('.content-type-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.content-type-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    selectedContentType = this.dataset.type;
+                });
+            });
+        }
+
+        function toggleExpertSystem() {
+            const content = document.getElementById('expertContent');
+            content.classList.toggle('active');
+        }
+
+        function resetForm() {
+            document.querySelectorAll('.genre-checkbox').forEach(cb => cb.checked = false);
+            document.getElementById('maxDuration').value = '180';
+            document.getElementById('minYear').value = '1990';
+            document.getElementById('favoriteActors').value = '';
+            document.getElementById('favoriteDirectors').value = '';
+            document.getElementById('bannedActors').value = '';
+            document.getElementById('bannedDirectors').value = '';
+            document.getElementById('resultsSection').style.display = 'none';
+        }
+
+        function getSelectedGenres() {
+            return Array.from(document.querySelectorAll('.genre-checkbox:checked')).map(cb => cb.value);
+        }
+
+        function parseTextarea(value) {
+            return value.split('\n').map(s => s.trim()).filter(s => s.length > 0);
+        }
+
+        function countCommonGenres(contentGenres, userGenres) {
+            return contentGenres.filter(g => userGenres.includes(g)).length;
+        }
+
+        function calculateScore(content, userGenres, maxDuration, minYear) {
+            const commonGenres = countCommonGenres(content.genres, userGenres);
+            const genreScore = commonGenres * 40;
+            const ratingScore = content.rating * 4;
+            let bonus = 0;
+            const warnings = [];
+
+            if (content.duration <= maxDuration) {
+                bonus += 10;
+            } else {
+                warnings.push('Durée dépasse votre préférence');
+            }
+
+            if (content.year >= minYear) {
+                bonus += 10;
+            } else {
+                warnings.push('Année antérieure à votre préférence');
+            }
+
+            return {
+                score: Math.round(genreScore + ratingScore + bonus),
+                warnings
+            };
+        }
+
+        function generateExplanation(content, userGenres, score, warnings, type) {
+            const commonCount = countCommonGenres(content.genres, userGenres);
+            const genreText = `Vous avez ${commonCount} genre(s) en commun`;
+            const ratingText = `Note élevée de ${content.rating}/10`;
+            const directorText = type === 'Film' ? 
+                `Réalisé par ${content.director}` : 
+                `Créé par ${content.director}`;
+            
+            let explanation = `Recommandé car : ${genreText}, ${ratingText}, ${directorText}`;
+            
+            if (type === 'Série') {
+                explanation += `, ${content.seasons} saison(s) disponible(s)`;
+            }
+
+            if (warnings.length > 0) {
+                explanation += `. Attention : ${warnings.join(', ')}`;
+            }
+
+            return explanation;
+        }
+
+        function shouldExclude(content, bannedActors, bannedDirectors) {
+            if (bannedDirectors.includes(content.director)) return true;
+            return content.actors.some(actor => bannedActors.includes(actor));
+        }
+
+        async function generateRecommendations() {
+            const userGenres = getSelectedGenres();
+            
+            if (userGenres.length === 0) {
+                alert('Veuillez sélectionner au moins un genre');
+                return;
+            }
+
+            const maxDuration = parseInt(document.getElementById('maxDuration').value);
+            const minYear = parseInt(document.getElementById('minYear').value);
+            const bannedActors = parseTextarea(document.getElementById('bannedActors').value);
+            const bannedDirectors = parseTextarea(document.getElementById('bannedDirectors').value);
+
+            // Show loading
+            document.getElementById('resultsSection').style.display = 'block';
+            document.getElementById('loadingSection').classList.add('active');
+            document.getElementById('recommendationsSection').innerHTML = '';
+            document.getElementById('statsSection').innerHTML = '';
+
+            // Simulate processing delay
+            await new Promise(resolve => setTimeout(resolve, 800));
+
+            // Select database
+            const database = selectedContentType === 'film' ? films : series;
+            const contentType = selectedContentType === 'film' ? 'Film' : 'Série';
+
+            // Process recommendations
+            const recommendations = database
+                .filter(content => !shouldExclude(content, bannedActors, bannedDirectors))
+                .map(content => {
+                    const {score, warnings} = calculateScore(content, userGenres, maxDuration, minYear);
+                    return {
+                        content,
+                        score,
+                        warnings,
+                        explanation: generateExplanation(content, userGenres, score, warnings, contentType)
+                    };
+                })
+                .filter(rec => rec.score > 20)
+                .sort((a, b) => b.score - a.score)
+                .slice(0, 5);
+
+            // Hide loading
+            document.getElementById('loadingSection').classList.remove('active');
+
+            // Display statistics
+            if (recommendations.length > 0) {
+                const maxScore = Math.max(...recommendations.map(r => r.score));
+                document.getElementById('statsSection').innerHTML = `
+                    <div class="stat-card">
+                        <div class="stat-value">${recommendations.length}</div>
+                        <div class="stat-label">Recommandations</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${userGenres.length}</div>
+                        <div class="stat-label">Genres sélectionnés</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${maxScore}</div>
+                        <div class="stat-label">Meilleur score</div>
+                    </div>
+                `;
+            }
+
+            // Display recommendations
+            if (recommendations.length === 0) {
+                document.getElementById('recommendationsSection').innerHTML = `
+                    <div class="no-results">
+                        <h3>Aucune recommandation trouvée</h3>
+                        <p style="color: var(--text-secondary); margin-top: 1rem;">
+                            Essayez de modifier vos critères de recherche ou de sélectionner d'autres genres.
+                        </p>
+                    </div>
+                `;
+            } else {
+                document.getElementById('recommendationsSection').innerHTML = recommendations.map((rec, index) => `
+                    <div class="recommendation-card" style="animation-delay: ${index * 0.1}s;">
+                        <div class="rec-header">
+                            <div class="rec-rank">#${index + 1}</div>
+                            <div class="rec-score">${rec.score}/100</div>
+                        </div>
+                        <div>
+                            <h3 class="rec-title">${rec.content.title}</h3>
+                            <span class="rec-type">${contentType}</span>
+                        </div>
+                        <div class="rec-explanation">${rec.explanation}</div>
+                        ${rec.warnings.length > 0 ? `
+                            <div class="warning">
+                                ⚠️ ${rec.warnings.join(', ')}
+                            </div>
+                        ` : ''}
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Initialize on load
+        init();
+    </script>
+</body>
+</html>
