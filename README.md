@@ -1,6 +1,6 @@
 # CinemaSIMA - Système Expert de Recommandation de Films et Séries
 
-## 📋 Description du Projet
+##  Description du Projet
 
 CinemaSIMA est un système expert développé en Prolog pour recommander des films et séries basé sur les préférences utilisateur. Le système utilise une approche symbolique avec des règles explicites pour générer des recommandations personnalisées et explicables.
 
@@ -219,7 +219,7 @@ Le fichier Prolog inclut des prédicats de test:
 
 Ces tests permettent de vérifier le bon fonctionnement du système.
 
-## 📄 Livrables
+##  Livrables
 
 1.  Code Prolog complet (`cinemasima.pl`)
 2.  Interface web (`index.html`)
